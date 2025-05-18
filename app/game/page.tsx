@@ -6,7 +6,11 @@ import NarrativeDisplay from "@/components/game/NarrativeDisplay";
 import Choices from "@/components/game/Choices";
 import MiniChallengeArea from "@/components/game/MiniChallengeArea";
 import { type NarrativeNode, type Choice } from "@/lib/narrativeStructure";
-import { type MiniChallengeType } from "@/lib/types";
+
+// Define GameSettings interface to type the response from the admin settings API
+interface GameSettings {
+  startNodeId: string | null;
+}
 
 interface GameStateResponse {
   success: boolean;
@@ -21,17 +25,46 @@ export default function GamePage() {
   const [currentGameId, setCurrentGameId] = useState<string | null>(null);
   const [fatalError, setFatalError] = useState<string | null>(null);
 
-  // ... useEffect for startGame (unchanged) ...
   useEffect(() => {
     const startGame = async () => {
       setIsLoading(true);
       setFatalError(null);
 
       try {
+        // --- STEP 1: Fetch the global game settings to get the startNodeId ---
+        const settingsResponse = await fetch("/api/admin/game-settings", {
+          cache: "no-store", // Ensure we get the very latest setting from the server
+        });
+
+        if (!settingsResponse.ok) {
+          const errorData = await settingsResponse.json(); // Assuming it returns JSON for errors
+          const errorMessage =
+            errorData.error ||
+            `Failed to fetch game settings: HTTP error! status: ${settingsResponse.status}`;
+          console.error(
+            "startGame - Error fetching game settings:",
+            errorMessage
+          );
+          setFatalError(`Failed to load game settings: ${errorMessage}`);
+          setIsLoading(false);
+          return;
+        }
+        const settingsData: GameSettings = await settingsResponse.json();
+
+        if (!settingsData.startNodeId) {
+          setFatalError(
+            "Game start node is not set in admin settings. Please configure it in the Admin Panel."
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        const initialNodeId = settingsData.startNodeId;
+
         const response = await fetch("/api/game/start", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({}),
+          body: JSON.stringify({ initialNodeId: initialNodeId }), // <-- Pass the fetched ID here
         });
 
         if (!response.ok) {
@@ -39,7 +72,7 @@ export default function GamePage() {
           const errorMessage =
             errorData.error || `HTTP error! status: ${response.status}`;
           console.error(
-            "API returned non-OK status:",
+            "Game Start API returned non-OK status:",
             response.status,
             errorMessage
           );
@@ -57,12 +90,12 @@ export default function GamePage() {
           const errorMessage =
             data.error ||
             "API indicated failure without specific error message.";
-          console.error("API indicated failure:", errorMessage);
+          console.error("startGame - API indicated failure:", errorMessage);
           setFatalError(`Failed to start game: ${errorMessage}`);
           setGameState(null);
         }
       } catch (error: any) {
-        console.error("Error during fetch operation:", error);
+        console.error("startGame - Error during fetch operation:", error);
         const errorMessage = error.message || "A network error occurred.";
         setFatalError(`Failed to start game: ${errorMessage}`);
         setGameState(null);
@@ -72,13 +105,12 @@ export default function GamePage() {
     };
 
     startGame();
-  }, []);
+  }, []); // Empty dependency array means this runs once on component mount
 
-  // ... handleChoiceSelected function (unchanged) ...
   const handleChoiceSelected = async (choiceId: string) => {
     if (!currentGameId || isLoading) {
       console.warn(
-        "Cannot make a choice: no current game ID or still loading."
+        "handleChoiceSelected - Cannot make a choice: no current game ID or still loading."
       );
       return;
     }
@@ -100,7 +132,7 @@ export default function GamePage() {
         const errorMessage =
           errorData.error || `HTTP error! status: ${response.status}`;
         console.error(
-          "Choice API returned non-OK status:",
+          "handleChoiceSelected - API returned non-OK status:",
           response.status,
           errorMessage
         );
@@ -116,24 +148,25 @@ export default function GamePage() {
         const errorMessage =
           data.error ||
           "Choice API indicated failure without specific error message.";
-        console.error("Choice API indicated failure:", errorMessage);
+        console.error(
+          "handleChoiceSelected - API indicated failure:",
+          errorMessage
+        );
       }
     } catch (error: any) {
-      console.error("Error sending choice:", error);
+      console.error("handleChoiceSelected - Error sending choice:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Make sure this function is correctly defined and calls the fetch API
   const handleChallengeCompleted = async (
     challengeId: string,
     success: boolean
   ) => {
-    // <--- This function
     if (!currentGameId || isLoading) {
       console.warn(
-        "Cannot complete challenge: no current game ID or still loading."
+        "handleChallengeCompleted - Cannot complete challenge: no current game ID or still loading."
       );
       return;
     }
@@ -141,14 +174,11 @@ export default function GamePage() {
     setIsLoading(true);
 
     try {
-      // Make sure this fetch call is correct
       const response = await fetch("/api/game/challenge", {
-        // <--- Calling the correct API route
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        // Make sure the body includes gameStateId, challengeId, and success
         body: JSON.stringify({
           gameStateId: currentGameId,
           challengeId: challengeId,
@@ -161,7 +191,7 @@ export default function GamePage() {
         const errorMessage =
           errorData.error || `HTTP error! status: ${response.status}`;
         console.error(
-          "Challenge API returned non-OK status:",
+          "handleChallengeCompleted - API returned non-OK status:",
           response.status,
           errorMessage
         );
@@ -177,10 +207,16 @@ export default function GamePage() {
         const errorMessage =
           data.error ||
           "Challenge API indicated failure without specific error message.";
-        console.error("Challenge API indicated failure:", errorMessage);
+        console.error(
+          "handleChallengeCompleted - API indicated failure:",
+          errorMessage
+        );
       }
     } catch (error: any) {
-      console.error("Error sending challenge result:", error);
+      console.error(
+        "handleChallengeCompleted - Error sending challenge result:",
+        error
+      );
     } finally {
       setIsLoading(false);
     }
@@ -223,11 +259,10 @@ export default function GamePage() {
             />
           )}
 
-        {/* Make sure handleChallengeCompleted is passed to MiniChallengeArea */}
         {!isLoading && currentNode.miniChallenge && (
           <MiniChallengeArea
             challenge={currentNode.miniChallenge}
-            onChallengeCompleted={handleChallengeCompleted} // <--- Passed down here
+            onChallengeCompleted={handleChallengeCompleted}
           />
         )}
 

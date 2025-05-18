@@ -142,12 +142,6 @@ export async function POST(
       },
     });
 
-    console.log(
-      `Game state ${gameStateId} updated to node ${
-        nextDbNode.id
-      } after challenge ${challengeId} (${success ? "Success" : "Failure"})`
-    );
-
     const nextApiNode: ApiNarrativeNode = {
       id: nextDbNode.id,
       text: nextDbNode.text,

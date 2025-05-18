@@ -40,6 +40,20 @@ model GameState {
   stateData Json? // Use Json? to allow flexible JSON objects and make it nullable
 }
 
+// New model for global game settings
+model GameSetting {
+  id          String         @id @default(cuid())
+  // Use a fixed unique name to ensure there's only one global settings record
+  settingName String         @unique // e.g., "global_game_settings"
+  startNodeId String?
+  // Relation to the NarrativeNode that is the game's entry point
+  startNode   NarrativeNode? @relation("GlobalStartNode", fields: [startNodeId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Add the back-relation to NarrativeNode
 model NarrativeNode {
   id        String   @id @default(cuid())
   title     String   @unique
@@ -54,14 +68,17 @@ model NarrativeNode {
   onFailureNodeId     String?
 
   // Choices originating from this node (where this node is the sourceNode)
-  choices Choice[] // This is the back-relation for Choice.sourceNode
+  choices Choice[]
 
-  // NEW: Choices that LEAD to this node (where this node is the nextNode)
-  incomingChoices Choice[] @relation("ChoiceOutcome") // <--- ADD THIS LINE
+  // Choices that LEAD to this node (where this node is the nextNode)
+  incomingChoices Choice[] @relation("ChoiceOutcome")
 
   // Back-relations from GameState
   gameStatesAsCurrent GameState[] @relation("CurrentNode")
   gameStatesAsStart   GameState[] @relation("StartNode")
+
+  // NEW: Back-relation for the global start node setting
+  gameSettingAsStart GameSetting[] @relation("GlobalStartNode") // <--- ADD THIS LINE
 }
 
 model Choice {

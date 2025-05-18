@@ -140,6 +140,14 @@ exports.Prisma.GameStateScalarFieldEnum = {
   stateData: 'stateData'
 };
 
+exports.Prisma.GameSettingScalarFieldEnum = {
+  id: 'id',
+  settingName: 'settingName',
+  startNodeId: 'startNodeId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.NarrativeNodeScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -192,6 +200,7 @@ exports.Prisma.JsonNullValueFilter = {
 exports.Prisma.ModelName = {
   User: 'User',
   GameState: 'GameState',
+  GameSetting: 'GameSetting',
   NarrativeNode: 'NarrativeNode',
   Choice: 'Choice'
 };

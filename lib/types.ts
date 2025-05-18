@@ -27,3 +27,15 @@ export interface ApiNarrativeNode {
     | null
     | undefined;
 }
+
+export interface NarrativeNode {
+  id: string;
+  title: string;
+  text: string;
+  imageUrl: string | null;
+  choices: Array<{ id: string; text: string; nextNodeId: string }>;
+  challengeType: string | null;
+  challengeIdInternal: string | null;
+  onSuccessNodeId: string | null;
+  onFailureNodeId: string | null;
+}

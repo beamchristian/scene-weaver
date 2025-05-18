@@ -1,26 +1,24 @@
 // src/app/admin/page.tsx
 "use client";
 
-import { useState, useEffect, FormEvent } from "react";
+import { NarrativeNode } from "@/lib/types"; // Ensure this import is correct
+import { useState, useEffect, FormEvent, useCallback } from "react";
 
-interface NarrativeNode {
-  id: string;
-  title: string;
-  text: string;
-  imageUrl: string | null;
-  choices: Array<{ id: string; text: string; nextNodeId: string }>;
-  challengeType: string | null;
-  challengeIdInternal: string | null;
-  onSuccessNodeId: string | null;
-  onFailureNodeId: string | null;
-}
-
-type MiniChallengeType =
-  | "quick_time_event"
-  | "simple_puzzle"
-  | "memory_game"
-  | "target_click"
-  | "riddle";
+// Define a type for the form data that matches your NarrativeNode fields
+// plus a temporary id for new choices
+type NodeFormData = Omit<
+  NarrativeNode,
+  | "id"
+  | "createdAt"
+  | "updatedAt"
+  | "choices"
+  | "incomingChoices"
+  | "gameStatesAsCurrent"
+  | "gameStatesAsStart"
+  | "gameSettingAsStart"
+> & {
+  choices: Array<{ id?: string; text: string; nextNodeId: string }>; // Include choices here
+};
 
 export default function AdminPage() {
   const [nodes, setNodes] = useState<NarrativeNode[]>([]);
@@ -29,11 +27,7 @@ export default function AdminPage() {
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
 
-  // New state for editing: tracks the ID of the node currently being edited
-  const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
-
-  // Initial state for the form data (used for both create and edit)
-  const initialFormData = {
+  const initialFormData: NodeFormData = {
     title: "",
     text: "",
     imageUrl: "",
@@ -41,42 +35,111 @@ export default function AdminPage() {
     challengeIdInternal: null,
     onSuccessNodeId: null,
     onFailureNodeId: null,
+    choices: [], // Initialize choices as an empty array
   };
-  const [formData, setFormData] =
-    useState<Omit<NarrativeNode, "id" | "choices">>(initialFormData);
+  const [formData, setFormData] = useState<NodeFormData>(initialFormData);
+  const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchNodes = async () => {
-      try {
-        const response = await fetch("/api/admin/narrative-nodes");
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data.success && Array.isArray(data.nodes)) {
-          setNodes(data.nodes);
-        } else {
-          setError(
-            data.error || "Failed to fetch nodes: Unexpected response format."
-          );
-        }
-      } catch (err: any) {
-        console.error("Error fetching nodes:", err);
-        setError(`Failed to fetch nodes: ${err.message}`);
-      } finally {
-        setLoading(false);
+  const [startNodeId, setStartNodeId] = useState<string | null>(null); // State for global start node
+
+  // State to hold all node titles for dropdowns (for nextNodeId, success/failure)
+  const [allNodeOptions, setAllNodeOptions] = useState<
+    Array<{ id: string; title: string }>
+  >([]);
+
+  // --- Fetching Data ---
+  const fetchNodes = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/narrative-nodes");
+      if (!res.ok) {
+        throw new Error(`Error fetching nodes: ${res.statusText}`);
       }
-    };
+      const responseData = await res.json();
+      if (!responseData.success || !Array.isArray(responseData.nodes)) {
+        throw new Error(
+          responseData.error ||
+            "Invalid data format from API or API reported an error."
+        );
+      }
+      const data: NarrativeNode[] = responseData.nodes;
+      setNodes(data);
+      setAllNodeOptions(
+        data.map((node) => ({ id: node.id, title: node.title }))
+      );
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchNodes();
+  const fetchGameSettings = useCallback(async () => {
+    try {
+      const response = await fetch("/api/admin/game-settings", {
+        cache: "no-store", // <--- ADD THIS LINE
+      });
+      const data = await response.json();
+      if (data.startNodeId) {
+        setStartNodeId(data.startNodeId);
+      }
+    } catch (error) {
+      console.error(
+        "DEBUG: fetchGameSettings - Error fetching game settings:",
+        error
+      );
+      setError("Failed to fetch game settings.");
+    }
   }, []);
 
-  // Function to handle clicking the "Edit" button
+  useEffect(() => {
+    fetchNodes();
+    fetchGameSettings(); // Make sure this is called on mount
+  }, []);
+
+  // --- Handlers for Game Settings ---
+  const handleSetStartNode = async (e: FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+    setFormSuccess(null);
+    if (!startNodeId) {
+      // Use startNodeId from state, not selectedStartNodeId
+      setFormError("Please select a start node.");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/admin/game-settings", {
+        method: "PUT", // Assuming PUT is the correct method for update
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ startNodeId }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error(
+          "DEBUG: handleSetStartNode - POST/PUT API Error Response:",
+          errorData
+        ); // DEBUG 4
+        throw new Error(
+          errorData.error || `Failed to set start node: ${res.statusText}`
+        );
+      }
+
+      const responseData = await res.json();
+
+      setFormSuccess("Start node set successfully!");
+      fetchGameSettings(); // Re-fetch to ensure UI is updated
+    } catch (err: any) {
+      setFormError(err.message);
+      console.error("DEBUG: handleSetStartNode - Error:", err); // DEBUG 7
+    }
+  };
+
+  // ... (rest of your form and node handlers remain the same) ...
+
   const handleEdit = (node: NarrativeNode) => {
-    console.log("1. Edit button clicked for node:", node.id, node.title);
     setEditingNodeId(node.id);
-    console.log("2. editingNodeId set to:", node.id);
-    // Populate the form with the node's current data
     setFormData({
       title: node.title,
       text: node.text,
@@ -85,21 +148,16 @@ export default function AdminPage() {
       challengeIdInternal: node.challengeIdInternal,
       onSuccessNodeId: node.onSuccessNodeId,
       onFailureNodeId: node.onFailureNodeId,
-    });
-    console.log("3. formData set to:", {
-      title: node.title,
-      text: node.text,
-      imageUrl: node.imageUrl,
-      challengeType: node.challengeType,
-      challengeIdInternal: node.challengeIdInternal,
-      onSuccessNodeId: node.onSuccessNodeId,
-      onFailureNodeId: node.onFailureNodeId,
+      choices: node.choices.map((choice) => ({
+        id: choice.id,
+        text: choice.text,
+        nextNodeId: choice.nextNodeId,
+      })),
     });
     setFormError(null);
     setFormSuccess(null);
   };
 
-  // Function to cancel editing and reset the form
   const handleCancelEdit = () => {
     setEditingNodeId(null);
     setFormData(initialFormData);
@@ -107,105 +165,80 @@ export default function AdminPage() {
     setFormSuccess(null);
   };
 
-  // Function to handle creating a new node
-  const handleCreateNode = async (
-    nodeData: Omit<NarrativeNode, "id" | "choices">
-  ) => {
-    setFormError(null);
-    setFormSuccess(null);
-
+  const handleCreateNode = async (data: NodeFormData) => {
     try {
-      const response = await fetch("/api/admin/narrative-nodes", {
+      const res = await fetch("/api/admin/narrative-nodes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(nodeData),
+        body: JSON.stringify(data),
       });
 
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        setNodes((prevNodes) => [...prevNodes, data.node]);
-        setFormSuccess("Node created successfully!");
-        setFormData(initialFormData); // Reset form
-        setEditingNodeId(null); // Ensure not in edit mode
-        return { success: true };
-      } else {
-        setFormError(
-          data.error || `Failed to create node: HTTP status ${response.status}`
-        );
-        return { success: false, error: data.error };
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to create node");
       }
+      const responseData = await res.json();
+      if (!responseData.success || !responseData.node) {
+        throw new Error(
+          responseData.error || "Invalid response format after creation."
+        );
+      }
+      setFormSuccess("Node created successfully!");
+      setFormData(initialFormData);
+      fetchNodes(); // Re-fetch all nodes to update the list
     } catch (err: any) {
-      console.error("Error creating node:", err);
-      setFormError(`Error creating node: ${err.message}`);
-      return { success: false, error: err.message };
+      setFormError(err.message);
     }
   };
 
-  // Function to handle updating an existing node
-  const handleUpdateNode = async (
-    nodeId: string,
-    updatedData: Omit<NarrativeNode, "id" | "choices">
-  ) => {
-    setFormError(null);
-    setFormSuccess(null);
-
+  const handleUpdateNode = async (nodeId: string, data: NodeFormData) => {
     try {
-      const response = await fetch(`/api/admin/narrative-nodes/${nodeId}`, {
-        method: "PUT", // Use PUT or PATCH for updates
+      const res = await fetch(`/api/admin/narrative-nodes/${nodeId}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedData),
+        body: JSON.stringify(data),
       });
 
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        setNodes((prevNodes) =>
-          prevNodes.map((node) => (node.id === nodeId ? data.node : node))
-        ); // Update the node in the list
-        setFormSuccess("Node updated successfully!");
-        setFormData(initialFormData); // Reset form
-        setEditingNodeId(null); // Exit edit mode
-        return { success: true };
-      } else {
-        setFormError(
-          data.error || `Failed to update node: HTTP status ${response.status}`
-        );
-        return { success: false, error: data.error };
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to update node");
       }
+      setFormSuccess("Node updated successfully!");
+      setEditingNodeId(null);
+      setFormData(initialFormData);
+      fetchNodes();
     } catch (err: any) {
-      console.error("Error updating node:", err);
-      setFormError(`Error updating node: ${err.message}`);
-      return { success: false, error: err.message };
+      setFormError(err.message);
     }
   };
 
   const handleDeleteNode = async (nodeId: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this node and its associated choices? This action cannot be undone."
-      )
-    ) {
-      return;
-    }
+    if (!confirm("Are you sure you want to delete this node?")) return;
     try {
-      const response = await fetch(`/api/admin/narrative-nodes/${nodeId}`, {
+      const res = await fetch(`/api/admin/narrative-nodes/${nodeId}`, {
         method: "DELETE",
       });
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setNodes((prevNodes) => prevNodes.filter((node) => node.id !== nodeId));
-        alert(`Node deleted successfully: ${data.message || ""}`);
-        // If the deleted node was currently being edited, clear the form
-        if (editingNodeId === nodeId) {
-          handleCancelEdit();
-        }
-      } else {
-        alert(`Failed to delete node: ${data.error}`);
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to delete node");
+      }
+      setFormSuccess("Node deleted successfully!");
+      fetchNodes();
+      if (editingNodeId === nodeId) {
+        handleCancelEdit();
+      }
+      // If the deleted node was the start node, clear it
+      if (startNodeId === nodeId) {
+        setStartNodeId(null);
+        await fetch("/api/admin/game-settings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ startNodeId: null }),
+        });
       }
     } catch (err: any) {
-      console.error("Error deleting node:", err);
-      alert(`Error deleting node: ${err.message}`);
+      setFormError(err.message);
     }
   };
 
@@ -218,14 +251,92 @@ export default function AdminPage() {
     }
   };
 
-  if (loading) return <div className='p-4'>Loading admin panel...</div>;
-  if (error) return <div className='p-4 text-red-500'>Error: {error}</div>;
+  const handleAddChoice = () => {
+    setFormData((prev) => ({
+      ...prev,
+      choices: [...prev.choices, { text: "", nextNodeId: "" }],
+    }));
+  };
+
+  const handleChoiceChange = (
+    index: number,
+    field: "text" | "nextNodeId",
+    value: string
+  ) => {
+    setFormData((prev) => {
+      const newChoices = [...prev.choices];
+      newChoices[index] = { ...newChoices[index], [field]: value };
+      return { ...prev, choices: newChoices };
+    });
+  };
+
+  const handleRemoveChoice = (index: number) => {
+    setFormData((prev) => {
+      const newChoices = prev.choices.filter((_, i) => i !== index);
+      return { ...prev, choices: newChoices };
+    });
+  };
+
+  if (loading) return <p>Loading nodes...</p>;
+  if (error) return <p className='text-red-500'>Error: {error}</p>;
+
+  // --- Logic to find the current start node's title for display ---
+  const currentStartNodeDisplay = startNodeId
+    ? allNodeOptions.find((node) => node.id === startNodeId)
+    : null;
 
   return (
     <div className='container mx-auto p-8'>
       <h1 className='text-3xl font-bold mb-6'>Story Admin Panel</h1>
 
-      {/* Form to Create/Edit Nodes - START OF SECTION TO COPY */}
+      {/* Global Game Settings Section */}
+      <section className='mb-8 p-6 bg-white rounded-lg shadow'>
+        <h2 className='text-2xl font-semibold mb-4'>Game Settings</h2>
+        {/* ADDED: Display for the current start node */}
+        <div className='flex items-center space-x-2 mb-4'>
+          <label className='block text-sm font-medium text-gray-700'>
+            Currently Set Start Node:
+          </label>
+          <span className='font-semibold text-indigo-700'>
+            {currentStartNodeDisplay
+              ? `${currentStartNodeDisplay.title} (${currentStartNodeDisplay.id})`
+              : "Not set"}
+          </span>
+        </div>
+        {/* END ADDED section */}
+
+        <form onSubmit={handleSetStartNode} className='space-y-4'>
+          <div>
+            <label
+              htmlFor='startNodeSelect'
+              className='block text-sm font-medium text-gray-700'
+            >
+              Select New Game Start Node:
+            </label>
+            <select
+              id='startNodeSelect'
+              value={startNodeId || ""}
+              onChange={(e) => setStartNodeId(e.target.value)}
+              className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+            >
+              <option value=''>-- Select Start Node --</option>
+              {allNodeOptions.map((node) => (
+                <option key={node.id} value={node.id}>
+                  {node.title} ({node.id})
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            type='submit'
+            className='w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+          >
+            Set Start Node
+          </button>
+        </form>
+      </section>
+
+      {/* Form to Create/Edit Nodes */}
       <section className='mb-8 p-6 bg-white rounded-lg shadow'>
         <h2 className='text-2xl font-semibold mb-4'>
           {editingNodeId ? "Edit Node" : "Create New Node"}
@@ -260,7 +371,7 @@ export default function AdminPage() {
               type='text'
               id='title'
               name='title'
-              value={formData.title || ""} // <-- Ensure using formData
+              value={formData.title}
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
               }
@@ -278,7 +389,7 @@ export default function AdminPage() {
             <textarea
               id='text'
               name='text'
-              value={formData.text} // <-- Ensure using formData
+              value={formData.text}
               onChange={(e) =>
                 setFormData({ ...formData, text: e.target.value })
               }
@@ -298,7 +409,7 @@ export default function AdminPage() {
               type='text'
               id='imageUrl'
               name='imageUrl'
-              value={formData.imageUrl || ""} // <-- Ensure using formData
+              value={formData.imageUrl || ""}
               onChange={(e) =>
                 setFormData({ ...formData, imageUrl: e.target.value })
               }
@@ -317,7 +428,7 @@ export default function AdminPage() {
               <select
                 id='challengeType'
                 name='challengeType'
-                value={formData.challengeType || ""} // <-- Ensure using formData
+                value={formData.challengeType || ""}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
@@ -345,7 +456,7 @@ export default function AdminPage() {
                 type='text'
                 id='challengeIdInternal'
                 name='challengeIdInternal'
-                value={formData.challengeIdInternal || ""} // <-- Ensure using formData
+                value={formData.challengeIdInternal || ""}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
@@ -365,11 +476,10 @@ export default function AdminPage() {
               >
                 On Success Node ID (Optional):
               </label>
-              <input
-                type='text'
+              <select
                 id='onSuccessNodeId'
                 name='onSuccessNodeId'
-                value={formData.onSuccessNodeId || ""} // <-- Ensure using formData
+                value={formData.onSuccessNodeId || ""}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
@@ -377,7 +487,14 @@ export default function AdminPage() {
                   })
                 }
                 className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
-              />
+              >
+                <option value=''>-- Select Success Node --</option>
+                {allNodeOptions.map((node) => (
+                  <option key={node.id} value={node.id}>
+                    {node.title} ({node.id})
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label
@@ -386,11 +503,10 @@ export default function AdminPage() {
               >
                 On Failure Node ID (Optional):
               </label>
-              <input
-                type='text'
+              <select
                 id='onFailureNodeId'
                 name='onFailureNodeId'
-                value={formData.onFailureNodeId || ""} // <-- Ensure using formData
+                value={formData.onFailureNodeId || ""}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
@@ -398,8 +514,84 @@ export default function AdminPage() {
                   })
                 }
                 className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
-              />
+              >
+                <option value=''>-- Select Failure Node --</option>
+                {allNodeOptions.map((node) => (
+                  <option key={node.id} value={node.id}>
+                    {node.title} ({node.id})
+                  </option>
+                ))}
+              </select>
             </div>
+          </div>
+
+          {/* Choices Management Section */}
+          <div className='border-t pt-4 mt-4'>
+            <h3 className='text-lg font-semibold mb-2'>Choices</h3>
+            {formData.choices.map((choice, index) => (
+              <div
+                key={choice.id || `new-choice-${index}`} // Use id if available, otherwise a temporary key
+                className='flex items-end space-x-2 mb-2 p-2 border rounded-md bg-gray-50'
+              >
+                <div className='flex-grow'>
+                  <label
+                    htmlFor={`choice-text-${index}`}
+                    className='block text-xs font-medium text-gray-600'
+                  >
+                    Choice Text:
+                  </label>
+                  <input
+                    type='text'
+                    id={`choice-text-${index}`}
+                    value={choice.text}
+                    onChange={(e) =>
+                      handleChoiceChange(index, "text", e.target.value)
+                    }
+                    className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-1 text-sm'
+                    placeholder='Choice text'
+                    required
+                  />
+                </div>
+                <div className='flex-grow'>
+                  <label
+                    htmlFor={`choice-nextNode-${index}`}
+                    className='block text-xs font-medium text-gray-600'
+                  >
+                    Leads to Node:
+                  </label>
+                  <select
+                    id={`choice-nextNode-${index}`}
+                    value={choice.nextNodeId}
+                    onChange={(e) =>
+                      handleChoiceChange(index, "nextNodeId", e.target.value)
+                    }
+                    className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-1 text-sm'
+                    required
+                  >
+                    <option value=''>-- Select Next Node --</option>
+                    {allNodeOptions.map((node) => (
+                      <option key={node.id} value={node.id}>
+                        {node.title} ({node.id})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <button
+                  type='button'
+                  onClick={() => handleRemoveChoice(index)}
+                  className='p-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm'
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button
+              type='button'
+              onClick={handleAddChoice}
+              className='mt-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm'
+            >
+              Add Choice
+            </button>
           </div>
 
           <button
@@ -411,7 +603,7 @@ export default function AdminPage() {
 
           {editingNodeId && (
             <button
-              type='button' // Important: This prevents form submission
+              type='button'
               onClick={handleCancelEdit}
               className='w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 mt-2'
             >
@@ -420,7 +612,6 @@ export default function AdminPage() {
           )}
         </form>
       </section>
-      {/* Form to Create/Edit Nodes - END OF SECTION TO COPY */}
 
       {/* List of Existing Nodes */}
       <section className='p-6 bg-white rounded-lg shadow'>
@@ -431,55 +622,59 @@ export default function AdminPage() {
           <div className='space-y-4'>
             {nodes.map((node) => (
               <div key={node.id} className='border p-4 rounded-md bg-gray-50'>
-                <h3 className='font-bold text-lg mb-2'>
-                  {node.title || `Node ${node.id.substring(0, 8)}`}
-                </h3>
-                <p className='text-gray-700 mb-2'>
-                  {node.text.substring(0, 200)}
-                  {node.text.length > 200 ? "..." : ""}
-                </p>
+                <h3 className='text-lg font-semibold'>{node.title}</h3>
+                <p className='text-gray-600 text-sm'>ID: {node.id}</p>
+                <p className='mt-2'>{node.text}</p>
                 {node.imageUrl && (
-                  <p className='text-sm text-gray-500'>
-                    **Image:** {node.imageUrl}
-                  </p>
+                  <img
+                    src={node.imageUrl}
+                    alt={node.title}
+                    className='mt-2 h-32 object-cover rounded-md'
+                  />
                 )}
-
                 {node.challengeType && (
-                  <p className='text-sm text-purple-600'>
-                    **Challenge:** {node.challengeType} (ID:{" "}
-                    {node.challengeIdInternal}) | Success:{" "}
-                    {nodes.find((n) => n.id === node.onSuccessNodeId)?.title ||
-                      node.onSuccessNodeId}{" "}
-                    | Failure:{" "}
-                    {nodes.find((n) => n.id === node.onFailureNodeId)?.title ||
-                      node.onFailureNodeId}
+                  <p className='text-sm mt-1'>
+                    **Challenge:** {node.challengeType}{" "}
+                    {node.challengeIdInternal &&
+                      ` (Internal ID: ${node.challengeIdInternal})`}
+                  </p>
+                )}
+                {node.onSuccessNodeId && (
+                  <p className='text-sm mt-1'>
+                    **Success leads to:**{" "}
+                    {allNodeOptions.find((o) => o.id === node.onSuccessNodeId)
+                      ?.title || node.onSuccessNodeId}
+                  </p>
+                )}
+                {node.onFailureNodeId && (
+                  <p className='text-sm mt-1'>
+                    **Failure leads to:**{" "}
+                    {allNodeOptions.find((o) => o.id === node.onFailureNodeId)
+                      ?.title || node.onFailureNodeId}
                   </p>
                 )}
 
-                <div className='mt-2'>
-                  <h4 className='font-semibold text-md mb-1'>
-                    Choices ({node.choices.length}):
-                  </h4>
-                  {node.choices.length > 0 ? (
-                    <ul className='list-disc ml-5 text-sm'>
+                {node.choices && node.choices.length > 0 && (
+                  <div className='mt-3'>
+                    <h4 className='text-md font-medium'>Choices:</h4>
+                    <ul className='list-disc list-inside text-sm'>
                       {node.choices.map((choice) => (
                         <li key={choice.id}>
-                          "{choice.text}" {"->"}{" "}
-                          {nodes.find((n) => n.id === choice.nextNodeId)
-                            ?.title || choice.nextNodeId}
+                          "{choice.text}" leads to{" "}
+                          <span className='font-semibold'>
+                            {allNodeOptions.find(
+                              (o) => o.id === choice.nextNodeId
+                            )?.title || choice.nextNodeId}
+                          </span>
                         </li>
                       ))}
                     </ul>
-                  ) : (
-                    <p className='text-sm text-gray-500'>
-                      No choices from this node.
-                    </p>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 <div className='mt-4 flex space-x-2'>
                   <button
-                    onClick={() => handleEdit(node)} // <-- Changed this line!
+                    onClick={() => handleEdit(node)}
                     className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600'
                   >
                     Edit

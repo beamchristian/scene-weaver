@@ -24,6 +24,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type GameState = $Result.DefaultSelection<Prisma.$GameStatePayload>
 /**
+ * Model GameSetting
+ * 
+ */
+export type GameSetting = $Result.DefaultSelection<Prisma.$GameSettingPayload>
+/**
  * Model NarrativeNode
  * 
  */
@@ -178,6 +183,16 @@ export class PrismaClient<
     * ```
     */
   get gameState(): Prisma.GameStateDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.gameSetting`: Exposes CRUD operations for the **GameSetting** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GameSettings
+    * const gameSettings = await prisma.gameSetting.findMany()
+    * ```
+    */
+  get gameSetting(): Prisma.GameSettingDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.narrativeNode`: Exposes CRUD operations for the **NarrativeNode** model.
@@ -640,6 +655,7 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     GameState: 'GameState',
+    GameSetting: 'GameSetting',
     NarrativeNode: 'NarrativeNode',
     Choice: 'Choice'
   };
@@ -660,7 +676,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "gameState" | "narrativeNode" | "choice"
+      modelProps: "user" | "gameState" | "gameSetting" | "narrativeNode" | "choice"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -809,6 +825,80 @@ export namespace Prisma {
           count: {
             args: Prisma.GameStateCountArgs<ExtArgs>
             result: $Utils.Optional<GameStateCountAggregateOutputType> | number
+          }
+        }
+      }
+      GameSetting: {
+        payload: Prisma.$GameSettingPayload<ExtArgs>
+        fields: Prisma.GameSettingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GameSettingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GameSettingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GameSettingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GameSettingPayload>
+          }
+          findFirst: {
+            args: Prisma.GameSettingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GameSettingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GameSettingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GameSettingPayload>
+          }
+          findMany: {
+            args: Prisma.GameSettingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GameSettingPayload>[]
+          }
+          create: {
+            args: Prisma.GameSettingCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GameSettingPayload>
+          }
+          createMany: {
+            args: Prisma.GameSettingCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.GameSettingCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GameSettingPayload>[]
+          }
+          delete: {
+            args: Prisma.GameSettingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GameSettingPayload>
+          }
+          update: {
+            args: Prisma.GameSettingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GameSettingPayload>
+          }
+          deleteMany: {
+            args: Prisma.GameSettingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GameSettingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.GameSettingUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GameSettingPayload>[]
+          }
+          upsert: {
+            args: Prisma.GameSettingUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GameSettingPayload>
+          }
+          aggregate: {
+            args: Prisma.GameSettingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGameSetting>
+          }
+          groupBy: {
+            args: Prisma.GameSettingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GameSettingGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.GameSettingCountArgs<ExtArgs>
+            result: $Utils.Optional<GameSettingCountAggregateOutputType> | number
           }
         }
       }
@@ -1046,6 +1136,7 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     user?: UserOmit
     gameState?: GameStateOmit
+    gameSetting?: GameSettingOmit
     narrativeNode?: NarrativeNodeOmit
     choice?: ChoiceOmit
   }
@@ -1177,6 +1268,7 @@ export namespace Prisma {
     incomingChoices: number
     gameStatesAsCurrent: number
     gameStatesAsStart: number
+    gameSettingAsStart: number
   }
 
   export type NarrativeNodeCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1184,6 +1276,7 @@ export namespace Prisma {
     incomingChoices?: boolean | NarrativeNodeCountOutputTypeCountIncomingChoicesArgs
     gameStatesAsCurrent?: boolean | NarrativeNodeCountOutputTypeCountGameStatesAsCurrentArgs
     gameStatesAsStart?: boolean | NarrativeNodeCountOutputTypeCountGameStatesAsStartArgs
+    gameSettingAsStart?: boolean | NarrativeNodeCountOutputTypeCountGameSettingAsStartArgs
   }
 
   // Custom InputTypes
@@ -1223,6 +1316,13 @@ export namespace Prisma {
    */
   export type NarrativeNodeCountOutputTypeCountGameStatesAsStartArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: GameStateWhereInput
+  }
+
+  /**
+   * NarrativeNodeCountOutputType without action
+   */
+  export type NarrativeNodeCountOutputTypeCountGameSettingAsStartArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GameSettingWhereInput
   }
 
 
@@ -3495,6 +3595,1083 @@ export namespace Prisma {
 
 
   /**
+   * Model GameSetting
+   */
+
+  export type AggregateGameSetting = {
+    _count: GameSettingCountAggregateOutputType | null
+    _min: GameSettingMinAggregateOutputType | null
+    _max: GameSettingMaxAggregateOutputType | null
+  }
+
+  export type GameSettingMinAggregateOutputType = {
+    id: string | null
+    settingName: string | null
+    startNodeId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GameSettingMaxAggregateOutputType = {
+    id: string | null
+    settingName: string | null
+    startNodeId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GameSettingCountAggregateOutputType = {
+    id: number
+    settingName: number
+    startNodeId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type GameSettingMinAggregateInputType = {
+    id?: true
+    settingName?: true
+    startNodeId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GameSettingMaxAggregateInputType = {
+    id?: true
+    settingName?: true
+    startNodeId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GameSettingCountAggregateInputType = {
+    id?: true
+    settingName?: true
+    startNodeId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type GameSettingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GameSetting to aggregate.
+     */
+    where?: GameSettingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GameSettings to fetch.
+     */
+    orderBy?: GameSettingOrderByWithRelationInput | GameSettingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GameSettingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GameSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GameSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GameSettings
+    **/
+    _count?: true | GameSettingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GameSettingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GameSettingMaxAggregateInputType
+  }
+
+  export type GetGameSettingAggregateType<T extends GameSettingAggregateArgs> = {
+        [P in keyof T & keyof AggregateGameSetting]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGameSetting[P]>
+      : GetScalarType<T[P], AggregateGameSetting[P]>
+  }
+
+
+
+
+  export type GameSettingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GameSettingWhereInput
+    orderBy?: GameSettingOrderByWithAggregationInput | GameSettingOrderByWithAggregationInput[]
+    by: GameSettingScalarFieldEnum[] | GameSettingScalarFieldEnum
+    having?: GameSettingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GameSettingCountAggregateInputType | true
+    _min?: GameSettingMinAggregateInputType
+    _max?: GameSettingMaxAggregateInputType
+  }
+
+  export type GameSettingGroupByOutputType = {
+    id: string
+    settingName: string
+    startNodeId: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: GameSettingCountAggregateOutputType | null
+    _min: GameSettingMinAggregateOutputType | null
+    _max: GameSettingMaxAggregateOutputType | null
+  }
+
+  type GetGameSettingGroupByPayload<T extends GameSettingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GameSettingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GameSettingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GameSettingGroupByOutputType[P]>
+            : GetScalarType<T[P], GameSettingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GameSettingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    settingName?: boolean
+    startNodeId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    startNode?: boolean | GameSetting$startNodeArgs<ExtArgs>
+  }, ExtArgs["result"]["gameSetting"]>
+
+  export type GameSettingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    settingName?: boolean
+    startNodeId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    startNode?: boolean | GameSetting$startNodeArgs<ExtArgs>
+  }, ExtArgs["result"]["gameSetting"]>
+
+  export type GameSettingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    settingName?: boolean
+    startNodeId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    startNode?: boolean | GameSetting$startNodeArgs<ExtArgs>
+  }, ExtArgs["result"]["gameSetting"]>
+
+  export type GameSettingSelectScalar = {
+    id?: boolean
+    settingName?: boolean
+    startNodeId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type GameSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "settingName" | "startNodeId" | "createdAt" | "updatedAt", ExtArgs["result"]["gameSetting"]>
+  export type GameSettingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    startNode?: boolean | GameSetting$startNodeArgs<ExtArgs>
+  }
+  export type GameSettingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    startNode?: boolean | GameSetting$startNodeArgs<ExtArgs>
+  }
+  export type GameSettingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    startNode?: boolean | GameSetting$startNodeArgs<ExtArgs>
+  }
+
+  export type $GameSettingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GameSetting"
+    objects: {
+      startNode: Prisma.$NarrativeNodePayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      settingName: string
+      startNodeId: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["gameSetting"]>
+    composites: {}
+  }
+
+  type GameSettingGetPayload<S extends boolean | null | undefined | GameSettingDefaultArgs> = $Result.GetResult<Prisma.$GameSettingPayload, S>
+
+  type GameSettingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GameSettingFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GameSettingCountAggregateInputType | true
+    }
+
+  export interface GameSettingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GameSetting'], meta: { name: 'GameSetting' } }
+    /**
+     * Find zero or one GameSetting that matches the filter.
+     * @param {GameSettingFindUniqueArgs} args - Arguments to find a GameSetting
+     * @example
+     * // Get one GameSetting
+     * const gameSetting = await prisma.gameSetting.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GameSettingFindUniqueArgs>(args: SelectSubset<T, GameSettingFindUniqueArgs<ExtArgs>>): Prisma__GameSettingClient<$Result.GetResult<Prisma.$GameSettingPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GameSetting that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GameSettingFindUniqueOrThrowArgs} args - Arguments to find a GameSetting
+     * @example
+     * // Get one GameSetting
+     * const gameSetting = await prisma.gameSetting.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GameSettingFindUniqueOrThrowArgs>(args: SelectSubset<T, GameSettingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GameSettingClient<$Result.GetResult<Prisma.$GameSettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GameSetting that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GameSettingFindFirstArgs} args - Arguments to find a GameSetting
+     * @example
+     * // Get one GameSetting
+     * const gameSetting = await prisma.gameSetting.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GameSettingFindFirstArgs>(args?: SelectSubset<T, GameSettingFindFirstArgs<ExtArgs>>): Prisma__GameSettingClient<$Result.GetResult<Prisma.$GameSettingPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GameSetting that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GameSettingFindFirstOrThrowArgs} args - Arguments to find a GameSetting
+     * @example
+     * // Get one GameSetting
+     * const gameSetting = await prisma.gameSetting.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GameSettingFindFirstOrThrowArgs>(args?: SelectSubset<T, GameSettingFindFirstOrThrowArgs<ExtArgs>>): Prisma__GameSettingClient<$Result.GetResult<Prisma.$GameSettingPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GameSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GameSettingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GameSettings
+     * const gameSettings = await prisma.gameSetting.findMany()
+     * 
+     * // Get first 10 GameSettings
+     * const gameSettings = await prisma.gameSetting.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const gameSettingWithIdOnly = await prisma.gameSetting.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GameSettingFindManyArgs>(args?: SelectSubset<T, GameSettingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GameSettingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GameSetting.
+     * @param {GameSettingCreateArgs} args - Arguments to create a GameSetting.
+     * @example
+     * // Create one GameSetting
+     * const GameSetting = await prisma.gameSetting.create({
+     *   data: {
+     *     // ... data to create a GameSetting
+     *   }
+     * })
+     * 
+     */
+    create<T extends GameSettingCreateArgs>(args: SelectSubset<T, GameSettingCreateArgs<ExtArgs>>): Prisma__GameSettingClient<$Result.GetResult<Prisma.$GameSettingPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GameSettings.
+     * @param {GameSettingCreateManyArgs} args - Arguments to create many GameSettings.
+     * @example
+     * // Create many GameSettings
+     * const gameSetting = await prisma.gameSetting.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GameSettingCreateManyArgs>(args?: SelectSubset<T, GameSettingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many GameSettings and returns the data saved in the database.
+     * @param {GameSettingCreateManyAndReturnArgs} args - Arguments to create many GameSettings.
+     * @example
+     * // Create many GameSettings
+     * const gameSetting = await prisma.gameSetting.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many GameSettings and only return the `id`
+     * const gameSettingWithIdOnly = await prisma.gameSetting.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends GameSettingCreateManyAndReturnArgs>(args?: SelectSubset<T, GameSettingCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GameSettingPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a GameSetting.
+     * @param {GameSettingDeleteArgs} args - Arguments to delete one GameSetting.
+     * @example
+     * // Delete one GameSetting
+     * const GameSetting = await prisma.gameSetting.delete({
+     *   where: {
+     *     // ... filter to delete one GameSetting
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GameSettingDeleteArgs>(args: SelectSubset<T, GameSettingDeleteArgs<ExtArgs>>): Prisma__GameSettingClient<$Result.GetResult<Prisma.$GameSettingPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GameSetting.
+     * @param {GameSettingUpdateArgs} args - Arguments to update one GameSetting.
+     * @example
+     * // Update one GameSetting
+     * const gameSetting = await prisma.gameSetting.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GameSettingUpdateArgs>(args: SelectSubset<T, GameSettingUpdateArgs<ExtArgs>>): Prisma__GameSettingClient<$Result.GetResult<Prisma.$GameSettingPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GameSettings.
+     * @param {GameSettingDeleteManyArgs} args - Arguments to filter GameSettings to delete.
+     * @example
+     * // Delete a few GameSettings
+     * const { count } = await prisma.gameSetting.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GameSettingDeleteManyArgs>(args?: SelectSubset<T, GameSettingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GameSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GameSettingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GameSettings
+     * const gameSetting = await prisma.gameSetting.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GameSettingUpdateManyArgs>(args: SelectSubset<T, GameSettingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GameSettings and returns the data updated in the database.
+     * @param {GameSettingUpdateManyAndReturnArgs} args - Arguments to update many GameSettings.
+     * @example
+     * // Update many GameSettings
+     * const gameSetting = await prisma.gameSetting.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more GameSettings and only return the `id`
+     * const gameSettingWithIdOnly = await prisma.gameSetting.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends GameSettingUpdateManyAndReturnArgs>(args: SelectSubset<T, GameSettingUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GameSettingPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one GameSetting.
+     * @param {GameSettingUpsertArgs} args - Arguments to update or create a GameSetting.
+     * @example
+     * // Update or create a GameSetting
+     * const gameSetting = await prisma.gameSetting.upsert({
+     *   create: {
+     *     // ... data to create a GameSetting
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GameSetting we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GameSettingUpsertArgs>(args: SelectSubset<T, GameSettingUpsertArgs<ExtArgs>>): Prisma__GameSettingClient<$Result.GetResult<Prisma.$GameSettingPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of GameSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GameSettingCountArgs} args - Arguments to filter GameSettings to count.
+     * @example
+     * // Count the number of GameSettings
+     * const count = await prisma.gameSetting.count({
+     *   where: {
+     *     // ... the filter for the GameSettings we want to count
+     *   }
+     * })
+    **/
+    count<T extends GameSettingCountArgs>(
+      args?: Subset<T, GameSettingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GameSettingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GameSetting.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GameSettingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GameSettingAggregateArgs>(args: Subset<T, GameSettingAggregateArgs>): Prisma.PrismaPromise<GetGameSettingAggregateType<T>>
+
+    /**
+     * Group by GameSetting.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GameSettingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GameSettingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GameSettingGroupByArgs['orderBy'] }
+        : { orderBy?: GameSettingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GameSettingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGameSettingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GameSetting model
+   */
+  readonly fields: GameSettingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GameSetting.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GameSettingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    startNode<T extends GameSetting$startNodeArgs<ExtArgs> = {}>(args?: Subset<T, GameSetting$startNodeArgs<ExtArgs>>): Prisma__NarrativeNodeClient<$Result.GetResult<Prisma.$NarrativeNodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GameSetting model
+   */
+  interface GameSettingFieldRefs {
+    readonly id: FieldRef<"GameSetting", 'String'>
+    readonly settingName: FieldRef<"GameSetting", 'String'>
+    readonly startNodeId: FieldRef<"GameSetting", 'String'>
+    readonly createdAt: FieldRef<"GameSetting", 'DateTime'>
+    readonly updatedAt: FieldRef<"GameSetting", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GameSetting findUnique
+   */
+  export type GameSettingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameSetting
+     */
+    select?: GameSettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameSetting
+     */
+    omit?: GameSettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameSettingInclude<ExtArgs> | null
+    /**
+     * Filter, which GameSetting to fetch.
+     */
+    where: GameSettingWhereUniqueInput
+  }
+
+  /**
+   * GameSetting findUniqueOrThrow
+   */
+  export type GameSettingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameSetting
+     */
+    select?: GameSettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameSetting
+     */
+    omit?: GameSettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameSettingInclude<ExtArgs> | null
+    /**
+     * Filter, which GameSetting to fetch.
+     */
+    where: GameSettingWhereUniqueInput
+  }
+
+  /**
+   * GameSetting findFirst
+   */
+  export type GameSettingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameSetting
+     */
+    select?: GameSettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameSetting
+     */
+    omit?: GameSettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameSettingInclude<ExtArgs> | null
+    /**
+     * Filter, which GameSetting to fetch.
+     */
+    where?: GameSettingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GameSettings to fetch.
+     */
+    orderBy?: GameSettingOrderByWithRelationInput | GameSettingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GameSettings.
+     */
+    cursor?: GameSettingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GameSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GameSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GameSettings.
+     */
+    distinct?: GameSettingScalarFieldEnum | GameSettingScalarFieldEnum[]
+  }
+
+  /**
+   * GameSetting findFirstOrThrow
+   */
+  export type GameSettingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameSetting
+     */
+    select?: GameSettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameSetting
+     */
+    omit?: GameSettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameSettingInclude<ExtArgs> | null
+    /**
+     * Filter, which GameSetting to fetch.
+     */
+    where?: GameSettingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GameSettings to fetch.
+     */
+    orderBy?: GameSettingOrderByWithRelationInput | GameSettingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GameSettings.
+     */
+    cursor?: GameSettingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GameSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GameSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GameSettings.
+     */
+    distinct?: GameSettingScalarFieldEnum | GameSettingScalarFieldEnum[]
+  }
+
+  /**
+   * GameSetting findMany
+   */
+  export type GameSettingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameSetting
+     */
+    select?: GameSettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameSetting
+     */
+    omit?: GameSettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameSettingInclude<ExtArgs> | null
+    /**
+     * Filter, which GameSettings to fetch.
+     */
+    where?: GameSettingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GameSettings to fetch.
+     */
+    orderBy?: GameSettingOrderByWithRelationInput | GameSettingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GameSettings.
+     */
+    cursor?: GameSettingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GameSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GameSettings.
+     */
+    skip?: number
+    distinct?: GameSettingScalarFieldEnum | GameSettingScalarFieldEnum[]
+  }
+
+  /**
+   * GameSetting create
+   */
+  export type GameSettingCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameSetting
+     */
+    select?: GameSettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameSetting
+     */
+    omit?: GameSettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameSettingInclude<ExtArgs> | null
+    /**
+     * The data needed to create a GameSetting.
+     */
+    data: XOR<GameSettingCreateInput, GameSettingUncheckedCreateInput>
+  }
+
+  /**
+   * GameSetting createMany
+   */
+  export type GameSettingCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GameSettings.
+     */
+    data: GameSettingCreateManyInput | GameSettingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * GameSetting createManyAndReturn
+   */
+  export type GameSettingCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameSetting
+     */
+    select?: GameSettingSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameSetting
+     */
+    omit?: GameSettingOmit<ExtArgs> | null
+    /**
+     * The data used to create many GameSettings.
+     */
+    data: GameSettingCreateManyInput | GameSettingCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameSettingIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * GameSetting update
+   */
+  export type GameSettingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameSetting
+     */
+    select?: GameSettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameSetting
+     */
+    omit?: GameSettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameSettingInclude<ExtArgs> | null
+    /**
+     * The data needed to update a GameSetting.
+     */
+    data: XOR<GameSettingUpdateInput, GameSettingUncheckedUpdateInput>
+    /**
+     * Choose, which GameSetting to update.
+     */
+    where: GameSettingWhereUniqueInput
+  }
+
+  /**
+   * GameSetting updateMany
+   */
+  export type GameSettingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GameSettings.
+     */
+    data: XOR<GameSettingUpdateManyMutationInput, GameSettingUncheckedUpdateManyInput>
+    /**
+     * Filter which GameSettings to update
+     */
+    where?: GameSettingWhereInput
+    /**
+     * Limit how many GameSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GameSetting updateManyAndReturn
+   */
+  export type GameSettingUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameSetting
+     */
+    select?: GameSettingSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameSetting
+     */
+    omit?: GameSettingOmit<ExtArgs> | null
+    /**
+     * The data used to update GameSettings.
+     */
+    data: XOR<GameSettingUpdateManyMutationInput, GameSettingUncheckedUpdateManyInput>
+    /**
+     * Filter which GameSettings to update
+     */
+    where?: GameSettingWhereInput
+    /**
+     * Limit how many GameSettings to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameSettingIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * GameSetting upsert
+   */
+  export type GameSettingUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameSetting
+     */
+    select?: GameSettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameSetting
+     */
+    omit?: GameSettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameSettingInclude<ExtArgs> | null
+    /**
+     * The filter to search for the GameSetting to update in case it exists.
+     */
+    where: GameSettingWhereUniqueInput
+    /**
+     * In case the GameSetting found by the `where` argument doesn't exist, create a new GameSetting with this data.
+     */
+    create: XOR<GameSettingCreateInput, GameSettingUncheckedCreateInput>
+    /**
+     * In case the GameSetting was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GameSettingUpdateInput, GameSettingUncheckedUpdateInput>
+  }
+
+  /**
+   * GameSetting delete
+   */
+  export type GameSettingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameSetting
+     */
+    select?: GameSettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameSetting
+     */
+    omit?: GameSettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameSettingInclude<ExtArgs> | null
+    /**
+     * Filter which GameSetting to delete.
+     */
+    where: GameSettingWhereUniqueInput
+  }
+
+  /**
+   * GameSetting deleteMany
+   */
+  export type GameSettingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GameSettings to delete
+     */
+    where?: GameSettingWhereInput
+    /**
+     * Limit how many GameSettings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GameSetting.startNode
+   */
+  export type GameSetting$startNodeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NarrativeNode
+     */
+    select?: NarrativeNodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NarrativeNode
+     */
+    omit?: NarrativeNodeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NarrativeNodeInclude<ExtArgs> | null
+    where?: NarrativeNodeWhereInput
+  }
+
+  /**
+   * GameSetting without action
+   */
+  export type GameSettingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameSetting
+     */
+    select?: GameSettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameSetting
+     */
+    omit?: GameSettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameSettingInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model NarrativeNode
    */
 
@@ -3702,6 +4879,7 @@ export namespace Prisma {
     incomingChoices?: boolean | NarrativeNode$incomingChoicesArgs<ExtArgs>
     gameStatesAsCurrent?: boolean | NarrativeNode$gameStatesAsCurrentArgs<ExtArgs>
     gameStatesAsStart?: boolean | NarrativeNode$gameStatesAsStartArgs<ExtArgs>
+    gameSettingAsStart?: boolean | NarrativeNode$gameSettingAsStartArgs<ExtArgs>
     _count?: boolean | NarrativeNodeCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["narrativeNode"]>
 
@@ -3750,6 +4928,7 @@ export namespace Prisma {
     incomingChoices?: boolean | NarrativeNode$incomingChoicesArgs<ExtArgs>
     gameStatesAsCurrent?: boolean | NarrativeNode$gameStatesAsCurrentArgs<ExtArgs>
     gameStatesAsStart?: boolean | NarrativeNode$gameStatesAsStartArgs<ExtArgs>
+    gameSettingAsStart?: boolean | NarrativeNode$gameSettingAsStartArgs<ExtArgs>
     _count?: boolean | NarrativeNodeCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type NarrativeNodeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3762,6 +4941,7 @@ export namespace Prisma {
       incomingChoices: Prisma.$ChoicePayload<ExtArgs>[]
       gameStatesAsCurrent: Prisma.$GameStatePayload<ExtArgs>[]
       gameStatesAsStart: Prisma.$GameStatePayload<ExtArgs>[]
+      gameSettingAsStart: Prisma.$GameSettingPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4172,6 +5352,7 @@ export namespace Prisma {
     incomingChoices<T extends NarrativeNode$incomingChoicesArgs<ExtArgs> = {}>(args?: Subset<T, NarrativeNode$incomingChoicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChoicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     gameStatesAsCurrent<T extends NarrativeNode$gameStatesAsCurrentArgs<ExtArgs> = {}>(args?: Subset<T, NarrativeNode$gameStatesAsCurrentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GameStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     gameStatesAsStart<T extends NarrativeNode$gameStatesAsStartArgs<ExtArgs> = {}>(args?: Subset<T, NarrativeNode$gameStatesAsStartArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GameStatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    gameSettingAsStart<T extends NarrativeNode$gameSettingAsStartArgs<ExtArgs> = {}>(args?: Subset<T, NarrativeNode$gameSettingAsStartArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GameSettingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4692,6 +5873,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: GameStateScalarFieldEnum | GameStateScalarFieldEnum[]
+  }
+
+  /**
+   * NarrativeNode.gameSettingAsStart
+   */
+  export type NarrativeNode$gameSettingAsStartArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GameSetting
+     */
+    select?: GameSettingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GameSetting
+     */
+    omit?: GameSettingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GameSettingInclude<ExtArgs> | null
+    where?: GameSettingWhereInput
+    orderBy?: GameSettingOrderByWithRelationInput | GameSettingOrderByWithRelationInput[]
+    cursor?: GameSettingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: GameSettingScalarFieldEnum | GameSettingScalarFieldEnum[]
   }
 
   /**
@@ -5832,6 +7037,17 @@ export namespace Prisma {
   export type GameStateScalarFieldEnum = (typeof GameStateScalarFieldEnum)[keyof typeof GameStateScalarFieldEnum]
 
 
+  export const GameSettingScalarFieldEnum: {
+    id: 'id',
+    settingName: 'settingName',
+    startNodeId: 'startNodeId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type GameSettingScalarFieldEnum = (typeof GameSettingScalarFieldEnum)[keyof typeof GameSettingScalarFieldEnum]
+
+
   export const NarrativeNodeScalarFieldEnum: {
     id: 'id',
     title: 'title',
@@ -6124,6 +7340,61 @@ export namespace Prisma {
     stateData?: JsonNullableWithAggregatesFilter<"GameState">
   }
 
+  export type GameSettingWhereInput = {
+    AND?: GameSettingWhereInput | GameSettingWhereInput[]
+    OR?: GameSettingWhereInput[]
+    NOT?: GameSettingWhereInput | GameSettingWhereInput[]
+    id?: StringFilter<"GameSetting"> | string
+    settingName?: StringFilter<"GameSetting"> | string
+    startNodeId?: StringNullableFilter<"GameSetting"> | string | null
+    createdAt?: DateTimeFilter<"GameSetting"> | Date | string
+    updatedAt?: DateTimeFilter<"GameSetting"> | Date | string
+    startNode?: XOR<NarrativeNodeNullableScalarRelationFilter, NarrativeNodeWhereInput> | null
+  }
+
+  export type GameSettingOrderByWithRelationInput = {
+    id?: SortOrder
+    settingName?: SortOrder
+    startNodeId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    startNode?: NarrativeNodeOrderByWithRelationInput
+  }
+
+  export type GameSettingWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    settingName?: string
+    AND?: GameSettingWhereInput | GameSettingWhereInput[]
+    OR?: GameSettingWhereInput[]
+    NOT?: GameSettingWhereInput | GameSettingWhereInput[]
+    startNodeId?: StringNullableFilter<"GameSetting"> | string | null
+    createdAt?: DateTimeFilter<"GameSetting"> | Date | string
+    updatedAt?: DateTimeFilter<"GameSetting"> | Date | string
+    startNode?: XOR<NarrativeNodeNullableScalarRelationFilter, NarrativeNodeWhereInput> | null
+  }, "id" | "settingName">
+
+  export type GameSettingOrderByWithAggregationInput = {
+    id?: SortOrder
+    settingName?: SortOrder
+    startNodeId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: GameSettingCountOrderByAggregateInput
+    _max?: GameSettingMaxOrderByAggregateInput
+    _min?: GameSettingMinOrderByAggregateInput
+  }
+
+  export type GameSettingScalarWhereWithAggregatesInput = {
+    AND?: GameSettingScalarWhereWithAggregatesInput | GameSettingScalarWhereWithAggregatesInput[]
+    OR?: GameSettingScalarWhereWithAggregatesInput[]
+    NOT?: GameSettingScalarWhereWithAggregatesInput | GameSettingScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GameSetting"> | string
+    settingName?: StringWithAggregatesFilter<"GameSetting"> | string
+    startNodeId?: StringNullableWithAggregatesFilter<"GameSetting"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"GameSetting"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"GameSetting"> | Date | string
+  }
+
   export type NarrativeNodeWhereInput = {
     AND?: NarrativeNodeWhereInput | NarrativeNodeWhereInput[]
     OR?: NarrativeNodeWhereInput[]
@@ -6142,6 +7413,7 @@ export namespace Prisma {
     incomingChoices?: ChoiceListRelationFilter
     gameStatesAsCurrent?: GameStateListRelationFilter
     gameStatesAsStart?: GameStateListRelationFilter
+    gameSettingAsStart?: GameSettingListRelationFilter
   }
 
   export type NarrativeNodeOrderByWithRelationInput = {
@@ -6159,6 +7431,7 @@ export namespace Prisma {
     incomingChoices?: ChoiceOrderByRelationAggregateInput
     gameStatesAsCurrent?: GameStateOrderByRelationAggregateInput
     gameStatesAsStart?: GameStateOrderByRelationAggregateInput
+    gameSettingAsStart?: GameSettingOrderByRelationAggregateInput
   }
 
   export type NarrativeNodeWhereUniqueInput = Prisma.AtLeast<{
@@ -6179,6 +7452,7 @@ export namespace Prisma {
     incomingChoices?: ChoiceListRelationFilter
     gameStatesAsCurrent?: GameStateListRelationFilter
     gameStatesAsStart?: GameStateListRelationFilter
+    gameSettingAsStart?: GameSettingListRelationFilter
   }, "id" | "title">
 
   export type NarrativeNodeOrderByWithAggregationInput = {
@@ -6417,6 +7691,61 @@ export namespace Prisma {
     stateData?: NullableJsonNullValueInput | InputJsonValue
   }
 
+  export type GameSettingCreateInput = {
+    id?: string
+    settingName: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    startNode?: NarrativeNodeCreateNestedOneWithoutGameSettingAsStartInput
+  }
+
+  export type GameSettingUncheckedCreateInput = {
+    id?: string
+    settingName: string
+    startNodeId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GameSettingUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    settingName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    startNode?: NarrativeNodeUpdateOneWithoutGameSettingAsStartNestedInput
+  }
+
+  export type GameSettingUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    settingName?: StringFieldUpdateOperationsInput | string
+    startNodeId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GameSettingCreateManyInput = {
+    id?: string
+    settingName: string
+    startNodeId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GameSettingUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    settingName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GameSettingUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    settingName?: StringFieldUpdateOperationsInput | string
+    startNodeId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type NarrativeNodeCreateInput = {
     id?: string
     title: string
@@ -6432,6 +7761,7 @@ export namespace Prisma {
     incomingChoices?: ChoiceCreateNestedManyWithoutNextNodeInput
     gameStatesAsCurrent?: GameStateCreateNestedManyWithoutCurrentNodeInput
     gameStatesAsStart?: GameStateCreateNestedManyWithoutStartNodeInput
+    gameSettingAsStart?: GameSettingCreateNestedManyWithoutStartNodeInput
   }
 
   export type NarrativeNodeUncheckedCreateInput = {
@@ -6449,6 +7779,7 @@ export namespace Prisma {
     incomingChoices?: ChoiceUncheckedCreateNestedManyWithoutNextNodeInput
     gameStatesAsCurrent?: GameStateUncheckedCreateNestedManyWithoutCurrentNodeInput
     gameStatesAsStart?: GameStateUncheckedCreateNestedManyWithoutStartNodeInput
+    gameSettingAsStart?: GameSettingUncheckedCreateNestedManyWithoutStartNodeInput
   }
 
   export type NarrativeNodeUpdateInput = {
@@ -6466,6 +7797,7 @@ export namespace Prisma {
     incomingChoices?: ChoiceUpdateManyWithoutNextNodeNestedInput
     gameStatesAsCurrent?: GameStateUpdateManyWithoutCurrentNodeNestedInput
     gameStatesAsStart?: GameStateUpdateManyWithoutStartNodeNestedInput
+    gameSettingAsStart?: GameSettingUpdateManyWithoutStartNodeNestedInput
   }
 
   export type NarrativeNodeUncheckedUpdateInput = {
@@ -6483,6 +7815,7 @@ export namespace Prisma {
     incomingChoices?: ChoiceUncheckedUpdateManyWithoutNextNodeNestedInput
     gameStatesAsCurrent?: GameStateUncheckedUpdateManyWithoutCurrentNodeNestedInput
     gameStatesAsStart?: GameStateUncheckedUpdateManyWithoutStartNodeNestedInput
+    gameSettingAsStart?: GameSettingUncheckedUpdateManyWithoutStartNodeNestedInput
   }
 
   export type NarrativeNodeCreateManyInput = {
@@ -6856,13 +8189,47 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
+  export type GameSettingCountOrderByAggregateInput = {
+    id?: SortOrder
+    settingName?: SortOrder
+    startNodeId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GameSettingMaxOrderByAggregateInput = {
+    id?: SortOrder
+    settingName?: SortOrder
+    startNodeId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GameSettingMinOrderByAggregateInput = {
+    id?: SortOrder
+    settingName?: SortOrder
+    startNodeId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type ChoiceListRelationFilter = {
     every?: ChoiceWhereInput
     some?: ChoiceWhereInput
     none?: ChoiceWhereInput
   }
 
+  export type GameSettingListRelationFilter = {
+    every?: GameSettingWhereInput
+    some?: GameSettingWhereInput
+    none?: GameSettingWhereInput
+  }
+
   export type ChoiceOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type GameSettingOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -7049,6 +8416,22 @@ export namespace Prisma {
     update?: XOR<XOR<NarrativeNodeUpdateToOneWithWhereWithoutGameStatesAsStartInput, NarrativeNodeUpdateWithoutGameStatesAsStartInput>, NarrativeNodeUncheckedUpdateWithoutGameStatesAsStartInput>
   }
 
+  export type NarrativeNodeCreateNestedOneWithoutGameSettingAsStartInput = {
+    create?: XOR<NarrativeNodeCreateWithoutGameSettingAsStartInput, NarrativeNodeUncheckedCreateWithoutGameSettingAsStartInput>
+    connectOrCreate?: NarrativeNodeCreateOrConnectWithoutGameSettingAsStartInput
+    connect?: NarrativeNodeWhereUniqueInput
+  }
+
+  export type NarrativeNodeUpdateOneWithoutGameSettingAsStartNestedInput = {
+    create?: XOR<NarrativeNodeCreateWithoutGameSettingAsStartInput, NarrativeNodeUncheckedCreateWithoutGameSettingAsStartInput>
+    connectOrCreate?: NarrativeNodeCreateOrConnectWithoutGameSettingAsStartInput
+    upsert?: NarrativeNodeUpsertWithoutGameSettingAsStartInput
+    disconnect?: NarrativeNodeWhereInput | boolean
+    delete?: NarrativeNodeWhereInput | boolean
+    connect?: NarrativeNodeWhereUniqueInput
+    update?: XOR<XOR<NarrativeNodeUpdateToOneWithWhereWithoutGameSettingAsStartInput, NarrativeNodeUpdateWithoutGameSettingAsStartInput>, NarrativeNodeUncheckedUpdateWithoutGameSettingAsStartInput>
+  }
+
   export type ChoiceCreateNestedManyWithoutSourceNodeInput = {
     create?: XOR<ChoiceCreateWithoutSourceNodeInput, ChoiceUncheckedCreateWithoutSourceNodeInput> | ChoiceCreateWithoutSourceNodeInput[] | ChoiceUncheckedCreateWithoutSourceNodeInput[]
     connectOrCreate?: ChoiceCreateOrConnectWithoutSourceNodeInput | ChoiceCreateOrConnectWithoutSourceNodeInput[]
@@ -7077,6 +8460,13 @@ export namespace Prisma {
     connect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
   }
 
+  export type GameSettingCreateNestedManyWithoutStartNodeInput = {
+    create?: XOR<GameSettingCreateWithoutStartNodeInput, GameSettingUncheckedCreateWithoutStartNodeInput> | GameSettingCreateWithoutStartNodeInput[] | GameSettingUncheckedCreateWithoutStartNodeInput[]
+    connectOrCreate?: GameSettingCreateOrConnectWithoutStartNodeInput | GameSettingCreateOrConnectWithoutStartNodeInput[]
+    createMany?: GameSettingCreateManyStartNodeInputEnvelope
+    connect?: GameSettingWhereUniqueInput | GameSettingWhereUniqueInput[]
+  }
+
   export type ChoiceUncheckedCreateNestedManyWithoutSourceNodeInput = {
     create?: XOR<ChoiceCreateWithoutSourceNodeInput, ChoiceUncheckedCreateWithoutSourceNodeInput> | ChoiceCreateWithoutSourceNodeInput[] | ChoiceUncheckedCreateWithoutSourceNodeInput[]
     connectOrCreate?: ChoiceCreateOrConnectWithoutSourceNodeInput | ChoiceCreateOrConnectWithoutSourceNodeInput[]
@@ -7103,6 +8493,13 @@ export namespace Prisma {
     connectOrCreate?: GameStateCreateOrConnectWithoutStartNodeInput | GameStateCreateOrConnectWithoutStartNodeInput[]
     createMany?: GameStateCreateManyStartNodeInputEnvelope
     connect?: GameStateWhereUniqueInput | GameStateWhereUniqueInput[]
+  }
+
+  export type GameSettingUncheckedCreateNestedManyWithoutStartNodeInput = {
+    create?: XOR<GameSettingCreateWithoutStartNodeInput, GameSettingUncheckedCreateWithoutStartNodeInput> | GameSettingCreateWithoutStartNodeInput[] | GameSettingUncheckedCreateWithoutStartNodeInput[]
+    connectOrCreate?: GameSettingCreateOrConnectWithoutStartNodeInput | GameSettingCreateOrConnectWithoutStartNodeInput[]
+    createMany?: GameSettingCreateManyStartNodeInputEnvelope
+    connect?: GameSettingWhereUniqueInput | GameSettingWhereUniqueInput[]
   }
 
   export type ChoiceUpdateManyWithoutSourceNodeNestedInput = {
@@ -7161,6 +8558,20 @@ export namespace Prisma {
     deleteMany?: GameStateScalarWhereInput | GameStateScalarWhereInput[]
   }
 
+  export type GameSettingUpdateManyWithoutStartNodeNestedInput = {
+    create?: XOR<GameSettingCreateWithoutStartNodeInput, GameSettingUncheckedCreateWithoutStartNodeInput> | GameSettingCreateWithoutStartNodeInput[] | GameSettingUncheckedCreateWithoutStartNodeInput[]
+    connectOrCreate?: GameSettingCreateOrConnectWithoutStartNodeInput | GameSettingCreateOrConnectWithoutStartNodeInput[]
+    upsert?: GameSettingUpsertWithWhereUniqueWithoutStartNodeInput | GameSettingUpsertWithWhereUniqueWithoutStartNodeInput[]
+    createMany?: GameSettingCreateManyStartNodeInputEnvelope
+    set?: GameSettingWhereUniqueInput | GameSettingWhereUniqueInput[]
+    disconnect?: GameSettingWhereUniqueInput | GameSettingWhereUniqueInput[]
+    delete?: GameSettingWhereUniqueInput | GameSettingWhereUniqueInput[]
+    connect?: GameSettingWhereUniqueInput | GameSettingWhereUniqueInput[]
+    update?: GameSettingUpdateWithWhereUniqueWithoutStartNodeInput | GameSettingUpdateWithWhereUniqueWithoutStartNodeInput[]
+    updateMany?: GameSettingUpdateManyWithWhereWithoutStartNodeInput | GameSettingUpdateManyWithWhereWithoutStartNodeInput[]
+    deleteMany?: GameSettingScalarWhereInput | GameSettingScalarWhereInput[]
+  }
+
   export type ChoiceUncheckedUpdateManyWithoutSourceNodeNestedInput = {
     create?: XOR<ChoiceCreateWithoutSourceNodeInput, ChoiceUncheckedCreateWithoutSourceNodeInput> | ChoiceCreateWithoutSourceNodeInput[] | ChoiceUncheckedCreateWithoutSourceNodeInput[]
     connectOrCreate?: ChoiceCreateOrConnectWithoutSourceNodeInput | ChoiceCreateOrConnectWithoutSourceNodeInput[]
@@ -7215,6 +8626,20 @@ export namespace Prisma {
     update?: GameStateUpdateWithWhereUniqueWithoutStartNodeInput | GameStateUpdateWithWhereUniqueWithoutStartNodeInput[]
     updateMany?: GameStateUpdateManyWithWhereWithoutStartNodeInput | GameStateUpdateManyWithWhereWithoutStartNodeInput[]
     deleteMany?: GameStateScalarWhereInput | GameStateScalarWhereInput[]
+  }
+
+  export type GameSettingUncheckedUpdateManyWithoutStartNodeNestedInput = {
+    create?: XOR<GameSettingCreateWithoutStartNodeInput, GameSettingUncheckedCreateWithoutStartNodeInput> | GameSettingCreateWithoutStartNodeInput[] | GameSettingUncheckedCreateWithoutStartNodeInput[]
+    connectOrCreate?: GameSettingCreateOrConnectWithoutStartNodeInput | GameSettingCreateOrConnectWithoutStartNodeInput[]
+    upsert?: GameSettingUpsertWithWhereUniqueWithoutStartNodeInput | GameSettingUpsertWithWhereUniqueWithoutStartNodeInput[]
+    createMany?: GameSettingCreateManyStartNodeInputEnvelope
+    set?: GameSettingWhereUniqueInput | GameSettingWhereUniqueInput[]
+    disconnect?: GameSettingWhereUniqueInput | GameSettingWhereUniqueInput[]
+    delete?: GameSettingWhereUniqueInput | GameSettingWhereUniqueInput[]
+    connect?: GameSettingWhereUniqueInput | GameSettingWhereUniqueInput[]
+    update?: GameSettingUpdateWithWhereUniqueWithoutStartNodeInput | GameSettingUpdateWithWhereUniqueWithoutStartNodeInput[]
+    updateMany?: GameSettingUpdateManyWithWhereWithoutStartNodeInput | GameSettingUpdateManyWithWhereWithoutStartNodeInput[]
+    deleteMany?: GameSettingScalarWhereInput | GameSettingScalarWhereInput[]
   }
 
   export type NarrativeNodeCreateNestedOneWithoutChoicesInput = {
@@ -7514,6 +8939,7 @@ export namespace Prisma {
     choices?: ChoiceCreateNestedManyWithoutSourceNodeInput
     incomingChoices?: ChoiceCreateNestedManyWithoutNextNodeInput
     gameStatesAsStart?: GameStateCreateNestedManyWithoutStartNodeInput
+    gameSettingAsStart?: GameSettingCreateNestedManyWithoutStartNodeInput
   }
 
   export type NarrativeNodeUncheckedCreateWithoutGameStatesAsCurrentInput = {
@@ -7530,6 +8956,7 @@ export namespace Prisma {
     choices?: ChoiceUncheckedCreateNestedManyWithoutSourceNodeInput
     incomingChoices?: ChoiceUncheckedCreateNestedManyWithoutNextNodeInput
     gameStatesAsStart?: GameStateUncheckedCreateNestedManyWithoutStartNodeInput
+    gameSettingAsStart?: GameSettingUncheckedCreateNestedManyWithoutStartNodeInput
   }
 
   export type NarrativeNodeCreateOrConnectWithoutGameStatesAsCurrentInput = {
@@ -7551,6 +8978,7 @@ export namespace Prisma {
     choices?: ChoiceCreateNestedManyWithoutSourceNodeInput
     incomingChoices?: ChoiceCreateNestedManyWithoutNextNodeInput
     gameStatesAsCurrent?: GameStateCreateNestedManyWithoutCurrentNodeInput
+    gameSettingAsStart?: GameSettingCreateNestedManyWithoutStartNodeInput
   }
 
   export type NarrativeNodeUncheckedCreateWithoutGameStatesAsStartInput = {
@@ -7567,6 +8995,7 @@ export namespace Prisma {
     choices?: ChoiceUncheckedCreateNestedManyWithoutSourceNodeInput
     incomingChoices?: ChoiceUncheckedCreateNestedManyWithoutNextNodeInput
     gameStatesAsCurrent?: GameStateUncheckedCreateNestedManyWithoutCurrentNodeInput
+    gameSettingAsStart?: GameSettingUncheckedCreateNestedManyWithoutStartNodeInput
   }
 
   export type NarrativeNodeCreateOrConnectWithoutGameStatesAsStartInput = {
@@ -7628,6 +9057,7 @@ export namespace Prisma {
     choices?: ChoiceUpdateManyWithoutSourceNodeNestedInput
     incomingChoices?: ChoiceUpdateManyWithoutNextNodeNestedInput
     gameStatesAsStart?: GameStateUpdateManyWithoutStartNodeNestedInput
+    gameSettingAsStart?: GameSettingUpdateManyWithoutStartNodeNestedInput
   }
 
   export type NarrativeNodeUncheckedUpdateWithoutGameStatesAsCurrentInput = {
@@ -7644,6 +9074,7 @@ export namespace Prisma {
     choices?: ChoiceUncheckedUpdateManyWithoutSourceNodeNestedInput
     incomingChoices?: ChoiceUncheckedUpdateManyWithoutNextNodeNestedInput
     gameStatesAsStart?: GameStateUncheckedUpdateManyWithoutStartNodeNestedInput
+    gameSettingAsStart?: GameSettingUncheckedUpdateManyWithoutStartNodeNestedInput
   }
 
   export type NarrativeNodeUpsertWithoutGameStatesAsStartInput = {
@@ -7671,6 +9102,7 @@ export namespace Prisma {
     choices?: ChoiceUpdateManyWithoutSourceNodeNestedInput
     incomingChoices?: ChoiceUpdateManyWithoutNextNodeNestedInput
     gameStatesAsCurrent?: GameStateUpdateManyWithoutCurrentNodeNestedInput
+    gameSettingAsStart?: GameSettingUpdateManyWithoutStartNodeNestedInput
   }
 
   export type NarrativeNodeUncheckedUpdateWithoutGameStatesAsStartInput = {
@@ -7687,6 +9119,91 @@ export namespace Prisma {
     choices?: ChoiceUncheckedUpdateManyWithoutSourceNodeNestedInput
     incomingChoices?: ChoiceUncheckedUpdateManyWithoutNextNodeNestedInput
     gameStatesAsCurrent?: GameStateUncheckedUpdateManyWithoutCurrentNodeNestedInput
+    gameSettingAsStart?: GameSettingUncheckedUpdateManyWithoutStartNodeNestedInput
+  }
+
+  export type NarrativeNodeCreateWithoutGameSettingAsStartInput = {
+    id?: string
+    title: string
+    text: string
+    imageUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    challengeType?: string | null
+    challengeIdInternal?: string | null
+    onSuccessNodeId?: string | null
+    onFailureNodeId?: string | null
+    choices?: ChoiceCreateNestedManyWithoutSourceNodeInput
+    incomingChoices?: ChoiceCreateNestedManyWithoutNextNodeInput
+    gameStatesAsCurrent?: GameStateCreateNestedManyWithoutCurrentNodeInput
+    gameStatesAsStart?: GameStateCreateNestedManyWithoutStartNodeInput
+  }
+
+  export type NarrativeNodeUncheckedCreateWithoutGameSettingAsStartInput = {
+    id?: string
+    title: string
+    text: string
+    imageUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    challengeType?: string | null
+    challengeIdInternal?: string | null
+    onSuccessNodeId?: string | null
+    onFailureNodeId?: string | null
+    choices?: ChoiceUncheckedCreateNestedManyWithoutSourceNodeInput
+    incomingChoices?: ChoiceUncheckedCreateNestedManyWithoutNextNodeInput
+    gameStatesAsCurrent?: GameStateUncheckedCreateNestedManyWithoutCurrentNodeInput
+    gameStatesAsStart?: GameStateUncheckedCreateNestedManyWithoutStartNodeInput
+  }
+
+  export type NarrativeNodeCreateOrConnectWithoutGameSettingAsStartInput = {
+    where: NarrativeNodeWhereUniqueInput
+    create: XOR<NarrativeNodeCreateWithoutGameSettingAsStartInput, NarrativeNodeUncheckedCreateWithoutGameSettingAsStartInput>
+  }
+
+  export type NarrativeNodeUpsertWithoutGameSettingAsStartInput = {
+    update: XOR<NarrativeNodeUpdateWithoutGameSettingAsStartInput, NarrativeNodeUncheckedUpdateWithoutGameSettingAsStartInput>
+    create: XOR<NarrativeNodeCreateWithoutGameSettingAsStartInput, NarrativeNodeUncheckedCreateWithoutGameSettingAsStartInput>
+    where?: NarrativeNodeWhereInput
+  }
+
+  export type NarrativeNodeUpdateToOneWithWhereWithoutGameSettingAsStartInput = {
+    where?: NarrativeNodeWhereInput
+    data: XOR<NarrativeNodeUpdateWithoutGameSettingAsStartInput, NarrativeNodeUncheckedUpdateWithoutGameSettingAsStartInput>
+  }
+
+  export type NarrativeNodeUpdateWithoutGameSettingAsStartInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    text?: StringFieldUpdateOperationsInput | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    challengeType?: NullableStringFieldUpdateOperationsInput | string | null
+    challengeIdInternal?: NullableStringFieldUpdateOperationsInput | string | null
+    onSuccessNodeId?: NullableStringFieldUpdateOperationsInput | string | null
+    onFailureNodeId?: NullableStringFieldUpdateOperationsInput | string | null
+    choices?: ChoiceUpdateManyWithoutSourceNodeNestedInput
+    incomingChoices?: ChoiceUpdateManyWithoutNextNodeNestedInput
+    gameStatesAsCurrent?: GameStateUpdateManyWithoutCurrentNodeNestedInput
+    gameStatesAsStart?: GameStateUpdateManyWithoutStartNodeNestedInput
+  }
+
+  export type NarrativeNodeUncheckedUpdateWithoutGameSettingAsStartInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    text?: StringFieldUpdateOperationsInput | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    challengeType?: NullableStringFieldUpdateOperationsInput | string | null
+    challengeIdInternal?: NullableStringFieldUpdateOperationsInput | string | null
+    onSuccessNodeId?: NullableStringFieldUpdateOperationsInput | string | null
+    onFailureNodeId?: NullableStringFieldUpdateOperationsInput | string | null
+    choices?: ChoiceUncheckedUpdateManyWithoutSourceNodeNestedInput
+    incomingChoices?: ChoiceUncheckedUpdateManyWithoutNextNodeNestedInput
+    gameStatesAsCurrent?: GameStateUncheckedUpdateManyWithoutCurrentNodeNestedInput
+    gameStatesAsStart?: GameStateUncheckedUpdateManyWithoutStartNodeNestedInput
   }
 
   export type ChoiceCreateWithoutSourceNodeInput = {
@@ -7801,6 +9318,30 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type GameSettingCreateWithoutStartNodeInput = {
+    id?: string
+    settingName: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GameSettingUncheckedCreateWithoutStartNodeInput = {
+    id?: string
+    settingName: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GameSettingCreateOrConnectWithoutStartNodeInput = {
+    where: GameSettingWhereUniqueInput
+    create: XOR<GameSettingCreateWithoutStartNodeInput, GameSettingUncheckedCreateWithoutStartNodeInput>
+  }
+
+  export type GameSettingCreateManyStartNodeInputEnvelope = {
+    data: GameSettingCreateManyStartNodeInput | GameSettingCreateManyStartNodeInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ChoiceUpsertWithWhereUniqueWithoutSourceNodeInput = {
     where: ChoiceWhereUniqueInput
     update: XOR<ChoiceUpdateWithoutSourceNodeInput, ChoiceUncheckedUpdateWithoutSourceNodeInput>
@@ -7877,6 +9418,33 @@ export namespace Prisma {
     data: XOR<GameStateUpdateManyMutationInput, GameStateUncheckedUpdateManyWithoutStartNodeInput>
   }
 
+  export type GameSettingUpsertWithWhereUniqueWithoutStartNodeInput = {
+    where: GameSettingWhereUniqueInput
+    update: XOR<GameSettingUpdateWithoutStartNodeInput, GameSettingUncheckedUpdateWithoutStartNodeInput>
+    create: XOR<GameSettingCreateWithoutStartNodeInput, GameSettingUncheckedCreateWithoutStartNodeInput>
+  }
+
+  export type GameSettingUpdateWithWhereUniqueWithoutStartNodeInput = {
+    where: GameSettingWhereUniqueInput
+    data: XOR<GameSettingUpdateWithoutStartNodeInput, GameSettingUncheckedUpdateWithoutStartNodeInput>
+  }
+
+  export type GameSettingUpdateManyWithWhereWithoutStartNodeInput = {
+    where: GameSettingScalarWhereInput
+    data: XOR<GameSettingUpdateManyMutationInput, GameSettingUncheckedUpdateManyWithoutStartNodeInput>
+  }
+
+  export type GameSettingScalarWhereInput = {
+    AND?: GameSettingScalarWhereInput | GameSettingScalarWhereInput[]
+    OR?: GameSettingScalarWhereInput[]
+    NOT?: GameSettingScalarWhereInput | GameSettingScalarWhereInput[]
+    id?: StringFilter<"GameSetting"> | string
+    settingName?: StringFilter<"GameSetting"> | string
+    startNodeId?: StringNullableFilter<"GameSetting"> | string | null
+    createdAt?: DateTimeFilter<"GameSetting"> | Date | string
+    updatedAt?: DateTimeFilter<"GameSetting"> | Date | string
+  }
+
   export type NarrativeNodeCreateWithoutChoicesInput = {
     id?: string
     title: string
@@ -7891,6 +9459,7 @@ export namespace Prisma {
     incomingChoices?: ChoiceCreateNestedManyWithoutNextNodeInput
     gameStatesAsCurrent?: GameStateCreateNestedManyWithoutCurrentNodeInput
     gameStatesAsStart?: GameStateCreateNestedManyWithoutStartNodeInput
+    gameSettingAsStart?: GameSettingCreateNestedManyWithoutStartNodeInput
   }
 
   export type NarrativeNodeUncheckedCreateWithoutChoicesInput = {
@@ -7907,6 +9476,7 @@ export namespace Prisma {
     incomingChoices?: ChoiceUncheckedCreateNestedManyWithoutNextNodeInput
     gameStatesAsCurrent?: GameStateUncheckedCreateNestedManyWithoutCurrentNodeInput
     gameStatesAsStart?: GameStateUncheckedCreateNestedManyWithoutStartNodeInput
+    gameSettingAsStart?: GameSettingUncheckedCreateNestedManyWithoutStartNodeInput
   }
 
   export type NarrativeNodeCreateOrConnectWithoutChoicesInput = {
@@ -7928,6 +9498,7 @@ export namespace Prisma {
     choices?: ChoiceCreateNestedManyWithoutSourceNodeInput
     gameStatesAsCurrent?: GameStateCreateNestedManyWithoutCurrentNodeInput
     gameStatesAsStart?: GameStateCreateNestedManyWithoutStartNodeInput
+    gameSettingAsStart?: GameSettingCreateNestedManyWithoutStartNodeInput
   }
 
   export type NarrativeNodeUncheckedCreateWithoutIncomingChoicesInput = {
@@ -7944,6 +9515,7 @@ export namespace Prisma {
     choices?: ChoiceUncheckedCreateNestedManyWithoutSourceNodeInput
     gameStatesAsCurrent?: GameStateUncheckedCreateNestedManyWithoutCurrentNodeInput
     gameStatesAsStart?: GameStateUncheckedCreateNestedManyWithoutStartNodeInput
+    gameSettingAsStart?: GameSettingUncheckedCreateNestedManyWithoutStartNodeInput
   }
 
   export type NarrativeNodeCreateOrConnectWithoutIncomingChoicesInput = {
@@ -7976,6 +9548,7 @@ export namespace Prisma {
     incomingChoices?: ChoiceUpdateManyWithoutNextNodeNestedInput
     gameStatesAsCurrent?: GameStateUpdateManyWithoutCurrentNodeNestedInput
     gameStatesAsStart?: GameStateUpdateManyWithoutStartNodeNestedInput
+    gameSettingAsStart?: GameSettingUpdateManyWithoutStartNodeNestedInput
   }
 
   export type NarrativeNodeUncheckedUpdateWithoutChoicesInput = {
@@ -7992,6 +9565,7 @@ export namespace Prisma {
     incomingChoices?: ChoiceUncheckedUpdateManyWithoutNextNodeNestedInput
     gameStatesAsCurrent?: GameStateUncheckedUpdateManyWithoutCurrentNodeNestedInput
     gameStatesAsStart?: GameStateUncheckedUpdateManyWithoutStartNodeNestedInput
+    gameSettingAsStart?: GameSettingUncheckedUpdateManyWithoutStartNodeNestedInput
   }
 
   export type NarrativeNodeUpsertWithoutIncomingChoicesInput = {
@@ -8019,6 +9593,7 @@ export namespace Prisma {
     choices?: ChoiceUpdateManyWithoutSourceNodeNestedInput
     gameStatesAsCurrent?: GameStateUpdateManyWithoutCurrentNodeNestedInput
     gameStatesAsStart?: GameStateUpdateManyWithoutStartNodeNestedInput
+    gameSettingAsStart?: GameSettingUpdateManyWithoutStartNodeNestedInput
   }
 
   export type NarrativeNodeUncheckedUpdateWithoutIncomingChoicesInput = {
@@ -8035,6 +9610,7 @@ export namespace Prisma {
     choices?: ChoiceUncheckedUpdateManyWithoutSourceNodeNestedInput
     gameStatesAsCurrent?: GameStateUncheckedUpdateManyWithoutCurrentNodeNestedInput
     gameStatesAsStart?: GameStateUncheckedUpdateManyWithoutStartNodeNestedInput
+    gameSettingAsStart?: GameSettingUncheckedUpdateManyWithoutStartNodeNestedInput
   }
 
   export type GameStateCreateManyUserInput = {
@@ -8111,6 +9687,13 @@ export namespace Prisma {
     updatedAt?: Date | string
     currentNodeId?: string | null
     stateData?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type GameSettingCreateManyStartNodeInput = {
+    id?: string
+    settingName: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ChoiceUpdateWithoutSourceNodeInput = {
@@ -8219,6 +9802,27 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     currentNodeId?: NullableStringFieldUpdateOperationsInput | string | null
     stateData?: NullableJsonNullValueInput | InputJsonValue
+  }
+
+  export type GameSettingUpdateWithoutStartNodeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    settingName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GameSettingUncheckedUpdateWithoutStartNodeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    settingName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GameSettingUncheckedUpdateManyWithoutStartNodeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    settingName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

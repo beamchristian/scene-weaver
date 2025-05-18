@@ -1,19 +1,36 @@
 // src/app/api/admin/narrative-nodes/[id]/route.ts
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
+import { NarrativeNode } from "@/lib/types";
 
 // --- GET: Fetch a single Narrative Node by ID (Optional, uncomment if needed) ---
-// export async function GET(
-//   request: Request,
-//   { params }: { params: { id: string } }
-// ) {
-//   const nodeId = await params.id; // Apply await here too if uncommenting
-//   try {
-//     // ... rest of GET logic
-//   } catch (error: any) {
-//     // ...
-//   }
-// }
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const nodeIdParams = await params;
+  const nodeId = nodeIdParams?.id;
+  try {
+    // ... rest of GET logic
+  } catch (error: any) {
+    console.log("Error " + error);
+  }
+}
+
+// Helper type for incoming node data (similar to what you pass to setFormData)
+type NodeUpdateData = Omit<
+  NarrativeNode,
+  | "id"
+  | "createdAt"
+  | "updatedAt"
+  | "choices"
+  | "incomingChoices"
+  | "gameStatesAsCurrent"
+  | "gameStatesAsStart"
+  | "gameSettingAsStart"
+> & {
+  choices?: Array<{ id?: string; text: string; nextNodeId: string }>; // Choices can have an optional ID for existing choices
+};
 
 // --- PUT: Update an existing Narrative Node by ID ---
 export async function PUT(
@@ -22,7 +39,7 @@ export async function PUT(
 ) {
   // FIX: Await params before accessing id
 
-  const nodeIdparams = await params; // <--- ADD AWAIT HERE
+  const nodeIdparams = await params;
   const nodeId = nodeIdparams?.id;
 
   if (!nodeId) {
@@ -31,90 +48,98 @@ export async function PUT(
       { status: 400 }
     );
   }
+  const {
+    title,
+    text,
+    imageUrl,
+    challengeType,
+    challengeIdInternal,
+    onSuccessNodeId,
+    onFailureNodeId,
+    choices, // Extract choices from the request body
+  }: NodeUpdateData = await request.json();
 
   try {
-    const body = await request.json();
-    const {
-      title,
-      text,
-      imageUrl,
-      challengeType,
-      challengeIdInternal,
-      onSuccessNodeId,
-      onFailureNodeId,
-    } = body;
+    // Start a Prisma transaction to ensure atomicity
+    const updatedNode = await prisma.$transaction(async (tx) => {
+      // 1. Update the NarrativeNode itself
+      const node = await tx.narrativeNode.update({
+        where: { id: nodeId },
+        data: {
+          title,
+          text,
+          imageUrl,
+          challengeType,
+          challengeIdInternal,
+          onSuccessNodeId,
+          onFailureNodeId,
+        },
+      });
 
-    const dataToUpdate: Record<string, any> = {};
-    if (title !== undefined) dataToUpdate.title = title;
-    if (text !== undefined) dataToUpdate.text = text;
-    if (imageUrl !== undefined)
-      dataToUpdate.imageUrl = imageUrl === "" ? null : imageUrl;
-    if (challengeType !== undefined)
-      dataToUpdate.challengeType = challengeType === "" ? null : challengeType;
-    if (challengeIdInternal !== undefined)
-      dataToUpdate.challengeIdInternal =
-        challengeIdInternal === "" ? null : challengeIdInternal;
-    if (onSuccessNodeId !== undefined)
-      dataToUpdate.onSuccessNodeId =
-        onSuccessNodeId === "" ? null : onSuccessNodeId;
-    if (onFailureNodeId !== undefined)
-      dataToUpdate.onFailureNodeId =
-        onFailureNodeId === "" ? null : onFailureNodeId;
+      // 2. Manage Choices:
+      // Get current choices for this node from the database
+      const currentChoicesDb = await tx.choice.findMany({
+        where: { sourceNodeId: nodeId },
+      });
 
-    if (Object.keys(dataToUpdate).length === 0) {
-      return NextResponse.json(
-        { success: false, error: "No data provided for update." },
-        { status: 400 }
+      const choicesToCreate = choices?.filter((c) => !c.id) || [];
+      const choicesToUpdate = choices?.filter((c) => c.id) || [];
+      const choicesToDelete = currentChoicesDb.filter(
+        (dbChoice) =>
+          !choices?.some((reqChoice) => reqChoice.id === dbChoice.id)
       );
-    }
 
-    const updatedNarrativeNode = await prisma.narrativeNode.update({
-      where: { id: nodeId },
-      data: dataToUpdate,
-      include: {
-        choices: true,
-      },
+      // Delete choices that are no longer in the submitted list
+      if (choicesToDelete.length > 0) {
+        await tx.choice.deleteMany({
+          where: {
+            id: {
+              in: choicesToDelete.map((c) => c.id),
+            },
+          },
+        });
+      }
+
+      // Create new choices
+      if (choicesToCreate.length > 0) {
+        await tx.choice.createMany({
+          data: choicesToCreate.map((c) => ({
+            sourceNodeId: nodeId,
+            text: c.text,
+            nextNodeId: c.nextNodeId,
+          })),
+        });
+      }
+
+      // Update existing choices
+      for (const choice of choicesToUpdate) {
+        await tx.choice.update({
+          where: { id: choice.id },
+          data: {
+            text: choice.text,
+            nextNodeId: choice.nextNodeId,
+          },
+        });
+      }
+
+      // Re-fetch the node with its updated choices for the response
+      const nodeWithChoices = await tx.narrativeNode.findUnique({
+        where: { id: nodeId },
+        include: { choices: true },
+      });
+
+      return nodeWithChoices;
     });
 
+    return NextResponse.json(updatedNode);
+  } catch (error) {
+    console.error("Failed to update node:", error);
     return NextResponse.json(
-      { success: true, node: updatedNarrativeNode },
-      { status: 200 }
-    );
-  } catch (error: any) {
-    console.error(`Error updating narrative node ${nodeId}:`, error);
-    if (error.code === "P2025") {
-      return NextResponse.json(
-        { success: false, error: "Narrative node not found." },
-        { status: 404 }
-      );
-    }
-    if (error.code === "P2002") {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "A narrative node with this title already exists.",
-        },
-        { status: 409 }
-      );
-    }
-    if (error.code === "P2003") {
-      return NextResponse.json(
-        {
-          success: false,
-          error: `Invalid success or failure node ID provided. Please ensure the target nodes exist. Problem with field: ${error.meta?.field_name}`,
-        },
-        { status: 400 }
-      );
-    }
-    return NextResponse.json(
-      {
-        success: false,
-        error: `Failed to update narrative node: ${
-          error.message || "An unexpected error occurred."
-        }`,
-      },
+      { message: "Failed to update node" },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
