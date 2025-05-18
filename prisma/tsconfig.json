@@ -1,0 +1,15 @@
+// your-project/prisma/tsconfig.json
+{
+  "compilerOptions": {
+    "module": "esnext", // <--- CHANGE THIS FROM "CommonJS" TO "esnext"
+    "target": "es2022",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "outDir": "./dist"
+  },
+  "include": ["./seed.ts"]
+}
